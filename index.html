@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador ESAB Solutions | Academia BDS</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Carga de Fuente (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Iconos (Ionicons) -->
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Un fondo ligeramente gris para destacar la app */
+        }
+        /* Oculta los módulos por defecto */
+        .module-content {
+            display: none;
+        }
+        /* Estilos para el modal */
+        #results-modal {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .modal-hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .modal-visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        /* Estilos de formulario mejorados */
+        .form-label {
+            @apply block text-sm font-medium text-gray-700;
+        }
+        .form-input, .form-select {
+            @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 sm:text-sm;
+        }
+        /* Estilos para el reporte de resultados */
+        .report-section {
+            @apply border-b border-gray-200 py-4;
+        }
+        .report-label {
+            @apply text-sm font-medium text-gray-500;
+        }
+        .report-value {
+            @apply mt-1 text-lg font-semibold text-gray-900;
+        }
+        .report-value-big {
+            @apply text-3xl font-bold text-yellow-600; /* Color ESAB */
+        }
+        .report-justification {
+            @apply mt-2 text-sm text-gray-700 bg-gray-50 p-3 rounded-md border border-gray-200;
+        }
+        .report-esab-ref {
+            @apply mt-3 rounded-md border-l-4 border-yellow-500 bg-yellow-50 p-4 text-yellow-800;
+        }
+        .report-tech-spec {
+            @apply bg-gray-50 p-3 rounded-md border;
+        }
+        .spec-item {
+            @apply flex justify-between py-1 border-b;
+        }
+        .spec-label {
+            @apply text-sm font-medium text-gray-600;
+        }
+        .spec-value {
+            @apply text-sm font-semibold text-gray-900;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="min-h-screen p-4 md:p-8">
+        <div class="max-w-3xl mx-auto bg-white shadow-2xl rounded-xl overflow-hidden">
+            
+            <!-- Encabezado de la Aplicación (Temática ESAB) -->
+            <header class="bg-gray-800 text-white p-5 md:p-6">
+                <div class="flex items-center space-x-4">
+                    <!-- Icono de "Soluciones" o "Catálogo" -->
+                    <ion-icon name="cube-outline" class="text-5xl text-yellow-400"></ion-icon>
+                    <div>
+                        <h1 class="text-xl md:text-2xl font-bold">Especialista en Soluciones ESAB</h1>
+                        <h2 class="text-sm md:text-base font-light text-gray-300">Simulador de Inteligencia de Producto | Academia de Soldadura BDS</h2>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Contenedor Principal de la App -->
+            <main id="app-container" class="p-5 md:p-8">
+
+                <!-- Menú Principal (Estado Inicial) -->
+                <section id="module-menu">
+                    <h3 class="text-lg font-semibold text-gray-900">Bienvenido al Simulador ESAB Solutions.</h3>
+                    <p class="mt-2 text-gray-600">
+                        Este módulo de inteligencia artificial le guiará en la selección del consumible o equipo óptimo y cuantificará sus necesidades de material.
+                    </p>
+                    <p class="mt-4 font-medium text-gray-800">Por favor, seleccione la tarea que necesita realizar:</p>
+
+                    <div class="mt-6 grid grid-cols-1 gap-4">
+                        
+                        <!-- Módulo 1 Card -->
+                        <div onclick="showModule('module-1')" class="group relative flex items-center space-x-4 rounded-lg border border-gray-200 bg-gray-50 p-4 transition-all duration-300 hover:border-yellow-500 hover:shadow-lg hover:bg-yellow-50 cursor-pointer">
+                            <div class="flex-shrink-0 rounded-lg bg-yellow-500 p-3">
+                                <ion-icon name="options-outline" class="text-3xl text-gray-900"></ion-icon>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-900 group-hover:text-yellow-700">1. Módulo de Selección de Producto Óptimo</h4>
+                                <p class="text-sm text-gray-500">Recomienda equipos y consumibles basados en su aplicación.</p>
+                            </div>
+                        </div>
+
+                        <!-- Módulo 2 Card -->
+                        <div onclick="showModule('module-2')" class="group relative flex items-center space-x-4 rounded-lg border border-gray-200 bg-gray-50 p-4 transition-all duration-300 hover:border-yellow-500 hover:shadow-lg hover:bg-yellow-50 cursor-pointer">
+                            <div class="flex-shrink-0 rounded-lg bg-yellow-500 p-3">
+                                <ion-icon name="calculator-outline" class="text-3xl text-gray-900"></ion-icon>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-900 group-hover:text-yellow-700">2. Módulo de Calculadora de Consumibles</h4>
+                                <p class="text-sm text-gray-500">Cuantifica la cantidad total de material de aporte requerido.</p>
+                            </div>
+                        </div>
+
+                        <!-- Módulo 3 Card -->
+                        <div onclick="showModule('module-3')" class="group relative flex items-center space-x-4 rounded-lg border border-gray-200 bg-gray-50 p-4 transition-all duration-300 hover:border-yellow-500 hover:shadow-lg hover:bg-yellow-50 cursor-pointer">
+                            <div class="flex-shrink-0 rounded-lg bg-yellow-500 p-3">
+                                <ion-icon name="document-text-outline" class="text-3xl text-gray-900"></ion-icon>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-900 group-hover:text-yellow-700">3. Consulta de Especificaciones Técnicas</h4>
+                                <p class="text-sm text-gray-500">Busca la ficha técnica (TDS) de un producto ESAB específico.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Módulo 1: Selección de Producto -->
+                <section id="module-1" class="module-content">
+                    <header class="mb-6">
+                        <button onclick="showMenu()" class="mb-4 text-sm font-medium text-yellow-600 hover:text-yellow-800 flex items-center">
+                            <ion-icon name="chevron-back-outline" class="mr-1"></ion-icon>
+                            Volver al Menú
+                        </button>
+                        <h3 class="text-2xl font-bold text-gray-900">Módulo 1: Selección de Producto Óptimo</h3>
+                        <p class="text-gray-600">Ingrese los parámetros de su aplicación.</p>
+                    </header>
+
+                    <form id="form-module1" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+                            <!-- Proceso de Soldadura -->
+                            <div>
+                                <label for="m1-proceso" class="form-label">Proceso de Soldadura</label>
+                                <select id="m1-proceso" class="form-select" required>
+                                    <option value="MIG/MAG">MIG/MAG (GMAW)</option>
+                                    <option value="TIG">TIG (GTAW)</option>
+                                    <option value_="">Electrodo Revestido (SMAW)</option>
+                                    <option value="SAW">Arco Sumergido (SAW)</option>
+                                </select>
+                            </div>
+                            <!-- Material Base -->
+                            <div>
+                                <label for="m1-material" class="form-label">Material Base</label>
+                                <input type="text" id="m1-material" value="Acero al Carbono" class="form-input" placeholder="Ej: Acero Inox 316L" required>
+                            </div>
+                            <!-- Grosor del Material -->
+                            <div>
+                                <label for="m1-grosor" class="form-label">Grosor del Material (e)</label>
+                                <div class="relative mt-1">
+                                    <input type="number" id="m1-grosor" step="any" min="1" class="form-input pr-12" placeholder="Ej: 6" required>
+                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 text-sm">mm</span>
+                                </div>
+                            </div>
+                            <!-- Requisito Clave -->
+                            <div>
+                                <label for="m1-requisito" class="form-label">Requisito Clave</label>
+                                <select id="m1-requisito" class="form-select" required>
+                                    <option value="Productividad">Alta Productividad</option>
+                                    <option value="Calidad">Alta Calidad Radiográfica</option>
+                                    <option value="Exteriores">Soldadura en Exteriores</option>
+                                    <option value="BajoH">Bajo Hidrógeno</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Botón de Calcular -->
+                        <div class="pt-5 border-t border-gray-200">
+                            <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                                Obtener Recomendación
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Módulo 2: Calculadora de Consumibles -->
+                <section id="module-2" class="module-content">
+                    <header class="mb-6">
+                        <button onclick="showMenu()" class="mb-4 text-sm font-medium text-yellow-600 hover:text-yellow-800 flex items-center">
+                            <ion-icon name="chevron-back-outline" class="mr-1"></ion-icon>
+                            Volver al Menú
+                        </button>
+                        <h3 class="text-2xl font-bold text-gray-900">Módulo 2: Calculadora de Consumibles</h3>
+                        <p class="text-gray-600">Cuantifique la necesidad de material de aporte.</p>
+                    </header>
+
+                    <form id="form-module2" class="space-y-6">
+                        
+                        <!-- Toggle de Cálculo de Área -->
+                        <div class="flex items-center justify-between">
+                            <label for="m2-tipo-junta" class="form-label">Tipo de Junta</label>
+                            <div class="flex items-center">
+                                <input id="m2-toggle-area" type="checkbox" onchange="toggleAreaInputs()" class="h-4 w-4 rounded border-gray-300 text-yellow-600 focus:ring-yellow-500">
+                                <label for="m2-toggle-area" class="ml-2 block text-sm text-gray-700">Calcular área de V-Simple</label>
+                            </div>
+                        </div>
+
+                        <!-- Área Directa -->
+                        <div id="m2-area-directa">
+                            <label for="m2-area" class="form-label">Área Transversal (A)</label>
+                            <div class="relative mt-1">
+                                <input type="number" id="m2-area" step="any" min="1" class="form-input pr-12" placeholder="Ej: 50" required>
+                                <span class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 text-sm">mm²</span>
+                            </div>
+                        </div>
+
+                        <!-- Dimensiones para V-Simple (Oculto) -->
+                        <div id="m2-area-calculada" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-md border">
+                            <div>
+                                <label for="m2-v-espesor" class="form-label text-xs">Espesor (e)</label>
+                                <input type="number" id="m2-v-espesor" step="any" min="1" class="form-input text-sm" placeholder="mm">
+                            </div>
+                            <div>
+                                <label for="m2-v-angle" class="form-label text-xs">Ángulo (α)</label>
+                                <input type="number" id="m2-v-angle" step="any" min="1" class="form-input text-sm" placeholder="Ej: 60°">
+                            </div>
+                            <div>
+                                <label for="m2-v-gap" class="form-label text-xs">Sep. Raíz (g)</label>
+                                <input type="number" id="m2-v-gap" step="any" min="0" class="form-input text-sm" placeholder="mm">
+                            </div>
+                        </div>
+
+                        <!-- Otros Parámetros -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5 pt-4 border-t">
+                             <div>
+                                <label for="m2-length" class="form-label">Longitud Total (L)</label>
+                                <div class="relative mt-1">
+                                    <input type="number" id="m2-length" step="any" min="0.1" class="form-input pr-12" placeholder="Metros" required>
+                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 text-sm">m</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="m2-density" class="form-label">Densidad (ρ)</label>
+                                <div class="relative mt-1">
+                                    <input type="number" id="m2-density" step="0.01" min="1" class="form-input pr-16" value="7.85" required>
+                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 text-sm">g/cm³</span>
+                                </div>
+                            </div>
+                             <div>
+                                <label for="m2-eta" class="form-label">Eficiencia (η)</label>
+                                <select id="m2-eta" class="form-select" required>
+                                    <option value="0.65">SMAW (0.65)</option>
+                                    <option value="0.98">MIG/MAG (0.98)</option>
+                                    <option value="0.95">TIG (0.95)</option>
+                                    <option value="0.99">SAW (0.99)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Botón de Calcular -->
+                        <div class="pt-5 border-t border-gray-200">
+                            <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                                Calcular Consumibles
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Módulo 3: Consulta de Ficha Técnica -->
+                <section id="module-3" class="module-content">
+                    <header class="mb-6">
+                        <button onclick="showMenu()" class="mb-4 text-sm font-medium text-yellow-600 hover:text-yellow-800 flex items-center">
+                            <ion-icon name="chevron-back-outline" class="mr-1"></ion-icon>
+                            Volver al Menú
+                        </button>
+                        <h3 class="text-2xl font-bold text-gray-900">Módulo 3: Consulta de Especificaciones</h3>
+                        <p class="text-gray-600">Ingrese el nombre del producto ESAB para ver sus datos clave (simulado).</p>
+                    </header>
+                    
+                    <form id="form-module3" class="space-y-6">
+                        <div>
+                            <label for="m3-product" class="form-label">Nombre del Producto ESAB</label>
+                            <input type="text" id="m3-product" class="form-input" placeholder="Ej: OK Autrod 12.51, OK 55.00, etc." required>
+                        </div>
+
+                        <!-- Botón de Calcular -->
+                        <div class="pt-5 border-t border-gray-200">
+                            <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                                Consultar Ficha Técnica
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+            </main>
+
+            <!-- Pie de Página -->
+            <footer class="bg-gray-900 text-gray-400 p-5 text-xs text-center rounded-b-xl">
+                <p class="font-semibold text-gray-100">Declaración de Eficiencia ESAB</p>
+                <p class="mt-1">
+                    La información de ESAB Solutions es fundamental para la planificación eficiente del inventario y la selección de la mejor tecnología de soldadura para su proyecto.
+                </p>
+                <p class="mt-2 text-gray-500">ESAB Solutions Simulator | Academia de Soldadura BDS</p>
+            </footer>
+
+        </div>
+    </div>
+
+    <!-- Modal de Resultados -->
+    <div id="results-modal" class="modal-hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-75">
+        <div class="relative w-full max-w-2xl bg-white rounded-lg shadow-xl overflow-hidden">
+            <!-- Encabezado del Modal -->
+            <div class="flex justify-between items-center p-5 bg-gray-50 border-b border-gray-200">
+                <h3 id="results-title" class="text-xl font-semibold text-gray-900">Reporte ESAB</h3>
+                <button onclick="hideResults()" class="text-gray-400 hover:text-gray-600">
+                    <ion-icon name="close-outline" class="text-3xl"></ion-icon>
+                </button>
+            </div>
+            
+            <!-- Contenido del Modal -->
+            <div id="results-content" class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+                <!-- El contenido se inyectará aquí -->
+            </div>
+
+            <!-- Pie del Modal -->
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 text-right">
+                <button onclick="hideResults()" class="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- Gestión de Estado de la UI ---
+
+        const moduleMenu = document.getElementById('module-menu');
+        const module1 = document.getElementById('module-1');
+        const module2 = document.getElementById('module-2');
+        const module3 = document.getElementById('module-3');
+        const allModules = [moduleMenu, module1, module2, module3];
+
+        const resultsModal = document.getElementById('results-modal');
+        const resultsTitle = document.getElementById('results-title');
+        const resultsContent = document.getElementById('results-content');
+
+        const formModule1 = document.getElementById('form-module1');
+        const formModule2 = document.getElementById('form-module2');
+        const formModule3 = document.getElementById('form-module3');
+
+        // Referencias para Módulo 2
+        const toggleAreaEl = document.getElementById('m2-toggle-area');
+        const areaDirectaEl = document.getElementById('m2-area-directa');
+        const areaCalculadaEl = document.getElementById('m2-area-calculada');
+        const areaInputEl = document.getElementById('m2-area');
+        const vEspesorInput = document.getElementById('m2-v-espesor');
+        const vAngleInput = document.getElementById('m2-v-angle');
+        const vGapInput = document.getElementById('m2-v-gap');
+
+        /**
+         * Muestra un módulo específico y oculta los demás.
+         */
+        function showModule(moduleId) {
+            allModules.forEach(module => {
+                if (module) module.style.display = 'none';
+            });
+            const activeModule = document.getElementById(moduleId);
+            if (activeModule) {
+                activeModule.style.display = 'block';
+            }
+        }
+
+        /**
+         * Muestra el menú principal y oculta los módulos.
+         */
+        function showMenu() {
+            showModule('module-menu');
+        }
+
+        /**
+         * Muestra el modal de resultados.
+         */
+        function showResults(title, htmlContent) {
+            resultsTitle.innerText = title;
+            resultsContent.innerHTML = htmlContent;
+            resultsModal.classList.remove('modal-hidden');
+            resultsModal.classList.add('modal-visible');
+        }
+
+        /**
+         * Oculta el modal de resultados.
+         */
+        function hideResults() {
+            resultsModal.classList.add('modal-hidden');
+            resultsModal.classList.remove('modal-visible');
+        }
+
+        /**
+         * MÓDULO 2: Muestra u oculta los campos para calcular Área.
+         */
+        function toggleAreaInputs() {
+            if (toggleAreaEl.checked) {
+                areaDirectaEl.style.display = 'none';
+                areaCalculadaEl.style.display = 'grid';
+                areaInputEl.required = false;
+                vEspesorInput.required = true;
+                vAngleInput.required = true;
+                vGapInput.required = true;
+            } else {
+                areaDirectaEl.style.display = 'block';
+                areaCalculadaEl.style.display = 'none';
+                areaInputEl.required = true;
+                vEspesorInput.required = false;
+                vAngleInput.required = false;
+                vGapInput.required = false;
+            }
+        }
+
+        // --- Lógica de Simulación ---
+
+        /**
+         * MÓDULO 1: Simula la recomendación de producto.
+         */
+        function handleModule1(event) {
+            event.preventDefault();
+            const proceso = document.getElementById('m1-proceso').value;
+            const material = document.getElementById('m1-material').value.toLowerCase();
+            const grosor = parseFloat(document.getElementById('m1-grosor').value);
+            const requisito = document.getElementById('m1-requisito').value;
+
+            let recConsumible = "", recClasificacion = "", recEquipo = "", justificacion = "";
+
+            // Lógica de recomendación simulada
+            if (proceso === 'MIG/MAG' && material.includes('carbono') && requisito === 'Productividad') {
+                recClasificacion = "AWS A5.18 ER70S-6";
+                recConsumible = "OK Autrod 12.51";
+                recEquipo = "Rebel EMP 215ic (Multiproceso)";
+                justificacion = "La alta aleación de Si del OK Autrod 12.51 mejora la humectabilidad y reduce las salpicaduras en aplicaciones MIG/MAG de alta velocidad. El equipo Rebel ofrece un arco estable para esta aplicación.";
+            } else if (proceso === 'TIG' && material.includes('inox')) {
+                recClasificacion = "AWS A5.9 ER316LSi";
+                recConsumible = "OK Tigrod 316LSi";
+                recEquipo = "Rogue ET 200iP PRO (Alta Frecuencia con Pulso)";
+                justificacion = "El bajo contenido de carbono (L) previene la corrosión intergranular en aceros inoxidables. El equipo Rogue ET con pulso permite un control superior del baño de fusión para calidad radiográfica.";
+            } else if (proceso === 'SMAW' && (requisito === 'Exteriores' || requisito === 'BajoH')) {
+                recClasificacion = "AWS A5.1 E7018-1 H4R";
+                recConsumible = "OK 55.00";
+                recEquipo = "Rogue ES 180i PRO (Inverter Portátil)";
+                justificacion = "El OK 55.00 es un electrodo básico de bajo hidrógeno (H4R) ideal para soldaduras estructurales que requieren alta tenacidad, incluso en exteriores. El equipo Rogue ES es portátil y potente para SMAW.";
+            } else if (proceso === 'SAW' && grosor > 20) {
+                 recClasificacion = "AWS A5.17 F7A2-EM12K";
+                recConsumible = "Alambre OK Autrod 12.22 con Fundente OK Flux 10.71";
+                recEquipo = "Sistema de Arco Sumergido (Tractor A2/A6)";
+                justificacion = "La combinación de alambre/fundente ofrece altas tasas de deposición y excelentes propiedades mecánicas para grandes espesores, típico del proceso SAW de alta productividad.";
+            } else {
+                recClasificacion = "AWS A5.1 E6013";
+                recConsumible = "OK 46.00 (Conarc 46)";
+                recEquipo = "HandyArc 160i";
+                justificacion = "Esta es una recomendación genérica. El OK 46.00 es un electrodo rutílico versátil de fácil encendido, ideal para trabajos generales. Refine su búsqueda para una recomendación más precisa.";
+            }
+
+            // --- Generar Reporte HTML ---
+            const reportHtml = `
+                <div class="report-section">
+                    <span class="report-label">Recomendación de Consumible ESAB</span>
+                    <p class="report-value">${recConsumible}</p>
+                    <p class="text-sm text-gray-600">Clasificación: <strong>${recClasificacion}</strong></p>
+                </div>
+                <div class="report-section">
+                    <span class="report-label">Recomendación de Equipo ESAB</span>
+                    <p class="report-value">${recEquipo}</p>
+                </div>
+                <div class="report-section">
+                    <span class="report-label">Justificación Técnica</span>
+                    <div class="report-justification">${justificacion}</div>
+                </div>
+            `;
+            showResults('Recomendación de Solución ESAB', reportHtml);
+        }
+
+        /**
+         * MÓDULO 2: Calcula el área de V-Simple (si es necesario).
+         */
+        function getArea_mm2() {
+            if (!toggleAreaEl.checked) {
+                return parseFloat(areaInputEl.value);
+            } else {
+                const e = parseFloat(vEspesorInput.value);
+                const angle_deg = parseFloat(vAngleInput.value);
+                const gap = parseFloat(vGapInput.value);
+                
+                if (isNaN(e) || isNaN(angle_deg) || isNaN(gap)) return null;
+
+                // Cálculo de área de V-Simple (sin refuerzo)
+                const angle_rad = angle_deg * (Math.PI / 180);
+                const topWidth = gap + 2 * e * Math.tan(angle_rad / 2);
+                const areaV = ((topWidth + gap) / 2) * e; // mm²
+                return areaV;
+            }
+        }
+
+        /**
+         * MÓDULO 2: Simula la cuantificación de material.
+         */
+        function handleModule2(event) {
+            event.preventDefault();
+            
+            const area_mm2 = getArea_mm2();
+            if (area_mm2 === null || isNaN(area_mm2) || area_mm2 <= 0) {
+                alert("Por favor, ingrese un Área Transversal válida o complete los campos para calcularla.");
+                return;
+            }
+
+            const length_m = parseFloat(document.getElementById('m2-length').value);
+            const density_g_cm3 = parseFloat(document.getElementById('m2-density').value);
+            const eta = parseFloat(document.getElementById('m2-eta').value);
+
+            // --- CÁLCULO DE MASA ---
+            const totalArea_cm2 = area_mm2 / 100;
+            const length_cm = length_m * 100;
+            const volume_cm3 = totalArea_cm2 * length_cm;
+            const masaNeta_g = volume_cm3 * density_g_cm3;
+            const masaNeta_kg = masaNeta_g / 1000;
+            const masaBruta_kg = masaNeta_kg / eta;
+
+            // --- Lógica de Embalaje (Simulada) ---
+            let embalaje = "";
+            const proceso = document.getElementById('m2-eta').options[document.getElementById('m2-eta').selectedIndex].text;
+
+            if (proceso.includes("MIG") || proceso.includes("SAW")) {
+                const carretes = Math.ceil(masaBruta_kg / 15); // Asumiendo carretes de 15kg
+                embalaje = `Esto equivale a aproximadamente <strong>${carretes} carrete(s) de 15 kg</strong> (formato estándar ESAB para alambres).`;
+            } else if (proceso.includes("SMAW")) {
+                const paquetes = Math.ceil(masaBruta_kg / 5); // Asumiendo paquetes de 5kg
+                embalaje = `Esto equivale a aproximadamente <strong>${paquetes} paquete(s) de 5 kg</strong> (formato estándar ESAB para electrodos).`;
+            } else {
+                 const varillas = Math.ceil(masaBruta_kg / 2.5); // Asumiendo tubos de 2.5kg
+                embalaje = `Esto equivale a aproximadamente <strong>${varillas} tubo(s) de 2.5 kg</strong> (formato estándar ESAB para TIG).`;
+            }
+
+            // --- Generar Reporte HTML ---
+            const reportHtml = `
+                <div class="report-section">
+                    <span class="report-label">Masa Bruta a Comprar (M/η)</span>
+                    <p class="report-value-big">${masaBruta_kg.toFixed(2)} kg</p>
+                    <p class="mt-1 text-sm text-gray-500">Considerando un factor de eficiencia (η) del ${eta * 100}%.</p>
+                </div>
+                <div class="report-section grid grid-cols-2 gap-4">
+                    <div>
+                        <span class="report-label">Masa Neta de Aporte (M)</span>
+                        <p class="report-value">${masaNeta_kg.toFixed(2)} kg</p>
+                    </div>
+                    <div>
+                        <span class="report-label">Volumen Total (V)</span>
+                        <p class="report-value">${volume_cm3.toFixed(1)} cm³</p>
+                    </div>
+                    <div>
+                        <span class="report-label">Área Transversal (A)</span>
+                        <p class="report-value">${area_mm2.toFixed(1)} mm²</p>
+                    </div>
+                    <div>
+                        <span class="report-label">Longitud Total (L)</span>
+                        <p class="report-value">${length_m} m</p>
+                    </div>
+                </div>
+                <div class="report-esab-ref">
+                    <h4 class="font-bold">Referencia de Embalaje ESAB</h4>
+                    <p>${embalaje}</p>
+                </div>
+            `;
+            showResults('Cuantificación de Material', reportHtml);
+        }
+
+        /**
+         * MÓDULO 3: Simula la consulta de ficha técnica.
+         */
+        function handleModule3(event) {
+            event.preventDefault();
+            const productName = document.getElementById('m3-product').value.toLowerCase();
+            let html = "";
+
+            if (productName.includes("12.51")) {
+                html = `
+                    <div class="report-section">
+                        <span class="report-label">Producto</span>
+                        <p class="report-value">OK Autrod 12.51</p>
+                    </div>
+                    <div class="report-tech-spec">
+                        <div class="spec-item"><span class="spec-label">Clasificación AWS</span><span class="spec-value">A5.18 ER70S-6</span></div>
+                        <div class="spec-item"><span class="spec-label">Clasificación EN ISO</span><span class="spec-value">14341-A G 42 4 M21 3Si1</span></div>
+                        <div class="spec-item"><span class="spec-label">Tipo de Corriente</span><span class="spec-value">DC(+)</span></div>
+                        <div class="spec-item"><span class="spec-label">Gas de Protección</span><span class="spec-value">M21 (Ar + 15-25% CO2), C1 (100% CO2)</span></div>
+                        <div class="spec-item"><span class="spec-label">Límite Elástico (Mpa)</span><span class="spec-value">470 MPa</span></div>
+                        <div class="spec-item"><span class="spec-label">Resistencia Tracción (Mpa)</span><span class="spec-value">560 MPa</span></div>
+                        <div class="spec-item"><span class="spec-label">Impacto Charpy-V</span><span class="spec-value">100 J @ -20°C</span></div>
+                    </div>`;
+            } else if (productName.includes("55.00")) {
+                html = `
+                    <div class="report-section">
+                        <span class="report-label">Producto</span>
+                        <p class="report-value">OK 55.00</p>
+                    </div>
+                    <div class="report-tech-spec">
+                        <div class="spec-item"><span class="spec-label">Clasificación AWS</span><span class="spec-value">A5.1 E7018-1 H4R</span></div>
+                        <div class="spec-item"><span class="spec-label">Clasificación EN ISO</span><span class="spec-value">2560-A E 42 5 B 42 H5</span></div>
+                        <div class="spec-item"><span class="spec-label">Tipo de Corriente</span><span class="spec-value">DC(+) / AC</span></div>
+                        <div class="spec-item"><span class="spec-label">Tipo de Revestimiento</span><span class="spec-value">Básico (Bajo Hidrógeno)</span></div>
+                        <div class="spec-item"><span class="spec-label">Límite Elástico (Mpa)</span><span class="spec-value">460 MPa</span></div>
+                        <div class="spec-item"><span class="spec-label">Resistencia Tracción (Mpa)</span><span class="spec-value">550 MPa</span></div>
+                        <div class="spec-item"><span class="spec-label">Impacto Charpy-V</span><span class="spec-value">90 J @ -50°C</span></div>
+                    </div>`;
+            } else {
+                html = `<div class="report-warning-high p-4">
+                            <h4 class="font-bold">Producto No Encontrado</h4>
+                            <p>No se encontró la ficha técnica para "<strong>${productName}</strong>" en la base de datos simulada. Pruebe con "OK Autrod 12.51" o "OK 55.00".</p>
+                        </div>`;
+            }
+
+            showResults('Ficha Técnica de Producto (Simulada)', html);
+        }
+
+        // --- Inicialización y Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            showModule('module-menu');
+            formModule1.addEventListener('submit', handleModule1);
+            formModule2.addEventListener('submit', handleModule2);
+            formModule3.addEventListener('submit', handleModule3);
+
+            resultsModal.addEventListener('click', (e) => {
+                if (e.target === resultsModal) hideResults();
+            });
+        });
+    </script>
+</body>
+</html>
